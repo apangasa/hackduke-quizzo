@@ -49,3 +49,11 @@ function updateBoard(message){
   text.setAttribute("value", message)
 }
 
+function informUser(message) {
+    var modal = document.getElementById("modalElement");
+    var modalText = document.getElementById("messageBox");
+    
+    modal.style.display = "block";
+    modalText.innerHTML = message
+}
+
