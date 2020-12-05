@@ -1,5 +1,6 @@
 window.onload = function() {
     initiateWebCam();
+    displayBoard(true);
 };
 
 
@@ -16,12 +17,11 @@ function initiateWebCam() {
         console.log(err);
     });
 
-    setTimeout(function(){snapShot(webcam, canvas)}, 6000);
+    setInterval(function(){snapShot(webcam, canvas)}, 6000);
 } 
 
 function snapShot(webcam, canvas) {
     let png = webcam.snap();
-    console.log(png)
     png = png.split(',')[1]
     
     const data = { png: png };
@@ -34,8 +34,8 @@ function snapShot(webcam, canvas) {
     body: JSON.stringify(data),
     })
     .then(response => response.json())
-    .then(data => {
-    console.log('Success:', data);
+    .then(words => {
+    console.log('Success:', words);
     })
     .catch((error) => {
     console.error('Error:', error);
