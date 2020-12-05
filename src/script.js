@@ -22,6 +22,24 @@ function initiateWebCam() {
 function snapShot(webcam, canvas) {
     let png = webcam.snap();
     console.log(png)
+    png = png.split(',')[1]
+    
+    const data = { png: png };
+    const readPictureURL = 'https://31590508e157.ngrok.io/readPic';
+    fetch(readPictureURL, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+    console.log('Success:', data);
+    })
+    .catch((error) => {
+    console.error('Error:', error);
+    });
 }
 
 
