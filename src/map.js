@@ -35,7 +35,7 @@ class QuestionMap {
     }
     
 	getQuestions(topic) {
-    	return this.mapper[topic];
+    	return this.qMap[topic];
     }
 
     isTopic(topic) {
