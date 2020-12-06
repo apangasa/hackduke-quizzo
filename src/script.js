@@ -1,3 +1,6 @@
+let gameScore = 0;
+let sessionScore = 0;
+
 window.onload = function() {
   displayBoard(true);
   runOCR();
@@ -24,20 +27,34 @@ function runOCR() {
   });
 }
 
+function playGame(topic, bank, set) {
+  informUser(topic, set)
+
+  //updateBoard(store.qMap[qObjs[0]][0].q)
+// ...
+// delete selection from set
+// display board
+
+// playGame(topic, bank, set)
+
+}
+
 function analyzeData(data) {
 let store = new Questions()
 let qObjs = []
-let validTopics = ""
+let validTopicStack = []
 
 data.words.forEach(function(word) {
   if (store.isTopic(word) && !qObjs.includes(word)) {
-    validTopics +=  " " + word
+    validTopicStack.push(word)
     qObjs.push(word)   
   }  
 })
-informUser('Topics found: ' + validTopics)
 
-updateBoard(store.qMap[qObjs[0]][0].q)
+let unanswered = new Set([1, 2, 3, 4, 5])
+playGame(validTopicStack.pop(), store, unanswered)
+
+
 }
 
 function displayBoard(show) {
@@ -71,14 +88,20 @@ var text = document.querySelector("a-text")
 text.setAttribute("value", message)
 }
 
-function informUser(message) {
+function informUserOptions(topic, set) {
   var modal = document.getElementById("modalElement");
   var modalText = document.getElementById("messageBox");
   
   modal.style.display = "block";
-  modalText.innerHTML = message
+  modalText.innerHTML = topic
+  // display set of point options
+  // display game score and session score in top left and top right
   
-  setTimeout(function(modal){modal.style.display = "none"}, 2000, modal);
+  setTimeout(function(modal){modal.style.display = "none"}, 6000, modal);
+}
+
+function informUserScore(sessionScore) {
+
 }
 
 function stopCamera(webcam) {
