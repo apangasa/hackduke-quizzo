@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async function () {
        }
      }
       if (subscriptionKey === '' || subscriptionKey === 'subscription'||!subscriptionKey) {
-        //alert('No key!');
+        alert('No key!');
         return;
       }
       console.log(subscriptionKey);
