@@ -20,7 +20,7 @@ function runOCR() {
   .then(response => response.json())
   .then(data => {
   console.log('Success:', data);
-  analyzeData(data);
+  // analyzeData(data);
   })
   .catch((error) => {
   console.error('Error:', error);

@@ -1,3 +1,4 @@
+
 var authorizationToken;
 var SpeechSDK;
 var subscriptionKeyBool;
@@ -7,6 +8,9 @@ var serviceRegion;
 var readMode = true;
 var boardMode = false
 var quizMode = false;
+var gameOverMode = false;
+
+var question = '';
 
 var currentAnswer = 'CanvasBoard';
 //var preventTimeoutCall = false;
@@ -63,6 +67,12 @@ function updatePhraseList() {
   //recognizer.startContinuousRecognitionAsync();
 }
 
+function giveQuestion(x) {
+  // if x is valid
+  quizMode = true;
+  boardMode = false;
+}
+
 function analyzeSpeech(speechText) {
   console.log('analyzing')
   console.log(speechText)
@@ -91,8 +101,22 @@ function analyzeSpeech(speechText) {
       quizMode = true;
       boardMode = false;
       updatePhraseList();
+  } else if(speechText == "Quizzo, play again" && gameOverMode) {
+    gameOverMode = false;
+    // IF WE HAVE MORE TOPICS, boardMode = true
+  } else if(speechText == "Quizzo, exit") {
+    readMode = true;
+    boardMode = false
+    quizMode = false;
+    gameOverMode = false;
+
+    endGame()
+  } else if(quizMode) {
+    giveAnswer(currentSpeech);
+    quizMode = false;
+    boardMode = true;
   }
-  preventTimeoutCall = false;
+  // preventTimeoutCall = false;
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
