@@ -134,8 +134,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     }
   }
-  textBox = document.getElementById('textBox');
-  textBox.innerHTML = '';
+  //textBox = document.getElementById('textBox');
+  //textBox.innerHTML = '';
   // if we got an authorization token, use the token. Otherwise use the provided subscription key
     var speechConfig;
     if (authorizationToken) {
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     var timer;
     //var preventTimeoutCall;
     recognizer.recognizing = (s, e) => {
-      textBox.innerHTML = e.result.text;
+      //textBox.innerHTML = e.result.text;
       console.log(`RECOGNIZING: Text=${e.result.text}`);
       if (e.result.text.length + 3 > currentSpeech.length) {
         currentSpeech = e.result.text;
