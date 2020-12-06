@@ -4,6 +4,18 @@ var subscriptionKeyBool;
 var subscriptionKey;
 var serviceRegion;
 
+var readMode = true;
+var boardMode = false
+var quizMode = false;
+
+var currentAnswer = 'CanvasBoard';
+//var preventTimeoutCall = false;
+var currentSpeech = '';
+
+var commands = ['Quizzo, quiz me', 'Quizzo, give me 100', 'Quizzo, give me 200', 'Quizzo, give me 300', 
+                'Quizzo, give me 400', 'Quizzo, give me 500', 'Quizzo, exit', 'Quizzo, play again']
+
+
 async function RequestAuthorizationToken () {
   var authorizationEndpoint = true;
   if (authorizationEndpoint) {
@@ -29,6 +41,60 @@ async function RequestAuthorizationToken () {
     console.log('Got an authorization token: ' + authorizationToken);
   }
 }
+
+function updatePhraseList() {
+  console.log('updating phrase list');
+  phraseList.clear();
+  if(readMode) {
+      phraseList.addPhrase("Quizzo, quiz me");
+  } else if(boardMode) {
+      console.log('board mode');
+      phraseList.addPhrase(currentAnswer)
+      phraseList.addPhrase("Quizzo, give me 100");
+      phraseList.addPhrase("Quizzo, give me 200");
+      phraseList.addPhrase("Quizzo, give me 300");
+      phraseList.addPhrase("Quizzo, give me 400");
+      phraseList.addPhrase("Quizzo, give me 500");
+  } else if(quizMode) {
+      phraseList.addPhrase(currentAnswer);
+  }
+  //recognizer.stopContinuousRecognitionAsync();
+
+  //recognizer.startContinuousRecognitionAsync();
+}
+
+function analyzeSpeech(speechText) {
+  console.log('analyzing')
+  console.log(speechText)
+  //console.log(preventTimeoutCall)
+  // if(!preventTimeoutCall)
+  //   return;
+  console.log('still analyzing')
+
+  if(speechText == "Quizzo, quiz me" && readMode) {
+      console.log('ENTERING BOARD MODE')
+      boardMode = true;
+      readMode = false;
+      updatePhraseList();
+      initiateBoard();
+  } else if(speechText.includes("Quizzo, give me") && boardMode) {
+      if(speechText.includes("100"))
+          giveQuestion(1);
+      else if(speechText.includes("200"))
+          giveQuestion(2);
+      else if(speechText.includes("300"))
+          giveQuestion(3);
+      else if(speechText.includes("400"))
+          giveQuestion(4);
+      else if(speechText.includes("500"))
+          giveQuestion(5);
+      quizMode = true;
+      boardMode = false;
+      updatePhraseList();
+  }
+  preventTimeoutCall = false;
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
   document.addEventListener("click", async function(){
 
@@ -66,29 +132,37 @@ document.addEventListener('DOMContentLoaded', async function () {
     speechConfig.speechRecognitionLanguage = 'en-US';
     var audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
     recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+    phraseList = SpeechSDK.PhraseListGrammar.fromRecognizer(recognizer);
+    phraseList.addPhrase("Quizzo, quiz me");
+    commands.forEach(command => {
+      phraseList.addPhrase(command);
+    });
+    //phraseList.addPhrase("CanvasBoard")
     recognizer.startContinuousRecognitionAsync();
     var timer;
-    var preventTimeoutCall;
+    //var preventTimeoutCall;
     recognizer.recognizing = (s, e) => {
       textBox.innerHTML = e.result.text;
       console.log(`RECOGNIZING: Text=${e.result.text}`);
       if (e.result.text.length + 3 > currentSpeech.length) {
         currentSpeech = e.result.text;
-        try {
-          preventTimeoutCall = true;
-          // clearTimeout(timer);
-          console.log(preventTimeoutCall);
-        } catch (e) {
-          console.log('timer not initialized');
-        }
-        timer = setTimeout(function () {
-          console.log('After setting timer: ' + preventTimeoutCall);
-        }, 2000);
-        console.log(currentSpeech);
+        // try {
+        //   preventTimeoutCall = true;
+        //   // clearTimeout(timer);
+        //   //console.log(preventTimeoutCall);
+        // } catch (e) {
+        //   console.log('timer not initialized');
+        // }
+        // timer = setTimeout(function () {
+        //   analyzeSpeech(currentSpeech);
+        //   console.log('After setting timer: ' + preventTimeoutCall);
+        // }, 2000);
+        // console.log(currentSpeech);
       } else {
-        preventTimeoutCall = false;
-        clearTimeout(timer);
+        //preventTimeoutCall = false;
+        //clearTimeout(timer);
         console.log('Current Speech: ' + currentSpeech);
+        analyzeSpeech(currentSpeech);
         currentSpeech = e.result.text;
       }
     };
