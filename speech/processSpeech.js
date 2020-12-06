@@ -6,6 +6,10 @@ var readMode = true;
 var boardMode = false
 var quizMode = false;
 
+var words = []
+
+var questionMap = {}
+
 var currentQuestion = "";
 var currentAnswer = "";
 
@@ -24,6 +28,17 @@ function updatePhraseList() {
     }
 }
 
+function initiateBoard() {
+    words.forEach(word => {
+        // check if words match any of the topics
+    })
+    // ...
+}
+
+function giveQuestion(x) {
+    // ...
+}
+
 function analyzeSpeech(speechText) {
     if(speechText == "Quizzo, quiz me") {
         boardMode = true;
@@ -31,8 +46,20 @@ function analyzeSpeech(speechText) {
         updatePhraseList();
         initiateBoard();
     } else if(speechText.includes("Quizzo, give me")) {
+        if(speechText.includes("one"))
+            giveQuestion(1);
+        else if(speechText.includes("two"))
+            giveQuestion(2);
+        else if(speechText.includes("three"))
+            giveQuestion(3);
+        else if(speechText.includes("four"))
+            giveQuestion(4);
+        else if(speechText.includes("five"))
+            giveQuestion(5);
         quizMode = true;
         boardMode = false;
+        updatePhraseList();
+
     }
 }
 
