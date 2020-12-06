@@ -86,21 +86,23 @@ function analyzeSpeech(speechText) {
       boardMode = true;
       readMode = false;
       updatePhraseList();
-      initiateBoard();
+      runOCR();
   } else if(speechText.includes("Quizzo, give me") && boardMode) {
-      if(speechText.includes("100"))
-          giveQuestion(1);
-      else if(speechText.includes("200"))
-          giveQuestion(2);
-      else if(speechText.includes("300"))
-          giveQuestion(3);
-      else if(speechText.includes("400"))
-          giveQuestion(4);
-      else if(speechText.includes("500"))
-          giveQuestion(5);
       quizMode = true;
       boardMode = false;
       updatePhraseList();
+
+      if(speechText.includes("100"))
+          updateBoard(100);
+      else if(speechText.includes("200"))
+          updateBoard(200);
+      else if(speechText.includes("300"))
+          updateBoard(300);
+      else if(speechText.includes("400"))
+          updateBoard(400);
+      else if(speechText.includes("500"))
+          updateBoard(500);
+      
   } else if(speechText == "Quizzo, play again" && gameOverMode) {
     gameOverMode = false;
     // IF WE HAVE MORE TOPICS, boardMode = true
