@@ -28,7 +28,7 @@ function runOCR() {
 }
 
 function playGame(topic, bank, set) {
-  informUser(topic, set)
+  informUserOptions(topic, set)
 
   //updateBoard(store.qMap[qObjs[0]][0].q)
 // ...
