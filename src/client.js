@@ -5,7 +5,7 @@ var subscriptionKey;
 var serviceRegion;
 
 async function RequestAuthorizationToken () {
-  var authorizationEndpoint = 'token.php';
+  var authorizationEndpoint = true;
   if (authorizationEndpoint) {
     var myHeaders = new Headers();
     myHeaders.append('Accept', 'application/json');
@@ -30,6 +30,8 @@ async function RequestAuthorizationToken () {
   }
 }
 document.addEventListener('DOMContentLoaded', async function () {
+  document.addEventListener("click", async function(){
+
   if (window.SpeechSDK) {
     SpeechSDK = window.SpeechSDK;
     if (typeof RequestAuthorizationToken === 'function') {
@@ -121,4 +123,5 @@ document.addEventListener('DOMContentLoaded', async function () {
       console.log('\n    Session stopped event.');
       recognizer.stopContinuousRecognitionAsync();
     };
+    });
   })
