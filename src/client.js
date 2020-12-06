@@ -74,10 +74,6 @@ function giveQuestion(x) {
   boardMode = false;
 }
 
-function runOCR() {
-
-}
-
 function analyzeSpeech(speechText) {
   console.log('analyzing')
   console.log(speechText)
