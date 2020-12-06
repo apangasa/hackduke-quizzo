@@ -13,7 +13,8 @@ var gameOverMode = false;
 var question = '';
 
 var currentAnswer = 'CanvasBoard';
-//var preventTimeoutCall = false;
+var preventTimeoutCall = false;
+var TIMEOUT = 2000;
 var currentSpeech = '';
 
 var commands = ['Quizzo, quiz me', 'Quizzo, give me 100', 'Quizzo, give me 200', 'Quizzo, give me 300', 
@@ -73,12 +74,16 @@ function giveQuestion(x) {
   boardMode = false;
 }
 
+function runOCR() {
+
+}
+
 function analyzeSpeech(speechText) {
   console.log('analyzing')
   console.log(speechText)
   //console.log(preventTimeoutCall)
-  // if(!preventTimeoutCall)
-  //   return;
+  if(preventTimeoutCall)
+    return;
   console.log('still analyzing')
 
   if(speechText == "Quizzo, quiz me" && readMode) {
@@ -91,6 +96,7 @@ function analyzeSpeech(speechText) {
       quizMode = true;
       boardMode = false;
       updatePhraseList();
+      console.log('QUESTION SELECTED');
 
       if(speechText.includes("100"))
           updateBoard(100);
@@ -118,7 +124,7 @@ function analyzeSpeech(speechText) {
     quizMode = false;
     boardMode = true;
   }
-  // preventTimeoutCall = false;
+  preventTimeoutCall = true;
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -179,14 +185,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         // } catch (e) {
         //   console.log('timer not initialized');
         // }
-        // timer = setTimeout(function () {
-        //   analyzeSpeech(currentSpeech);
-        //   console.log('After setting timer: ' + preventTimeoutCall);
-        // }, 2000);
+        preventTimeoutCall = false;
+        timer = setTimeout(function () {
+          analyzeSpeech(currentSpeech);
+          console.log('After setting timer: ' + preventTimeoutCall);
+        }, TIMEOUT);
         // console.log(currentSpeech);
       } else {
         //preventTimeoutCall = false;
         //clearTimeout(timer);
+        preventTimeoutCall = true;
         console.log('Current Speech: ' + currentSpeech);
         analyzeSpeech(currentSpeech);
         currentSpeech = e.result.text;
