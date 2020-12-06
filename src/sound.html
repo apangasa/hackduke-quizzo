@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>WebSocket Example</title>
+  </head>
+  <body>
+    <div>
+        <button id = "start-recording" disabled>Start Recording</button>
+        <button id = "stop-recording" disabled>Stop Recording</button>
+    </div>
+
+    <textarea id = "results" style = "width: 800px; height: 300px;"></textarea>
+
+    <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+    <!-- <script src="./getAudioStream.js"></script> -->
+    <script>
+    const startRecording = document.getElementById('start-recording');
+    const stopRecording = document.getElementById('stop-recording');
+    let recordAudio;
+
+    const socket = new WebSocket('ws://localhost:3210');
+    socket.onopen = function() {
+        startRecording.disabled = false;
+        socket.send("opened");
+        console.log("connected");
+    };
+
+    startRecording.onclick = function() {
+        startRecording.disabled = true;
+
+        navigator.getUserMedia({
+            audio: true
+        }, function(stream) {
+            recordAudio = RecordRTC(stream, {
+                type: 'audio',
+                mimeType: 'audio/webm',
+                sampleRate: 44100,
+                desiredSampRate: 16000,
+                recorderType: StereoAudioRecorder,
+                numberOfAudioChannels: 1,
+
+                timeSlice: 4000, // every 4 seconds
+                ondataavailable: function(blob) {
+                  let reader = new FileReader();
+                  reader.readAsDataURL(blob);
+                  reader.onloadend = function() {
+                    var base64data = reader.result;
+                    console.log(base64data);
+                    let data = {message: base64data};
+                    socket.send(JSON.stringify(data));
+    }
+                    console.log(data);
+                }
+            });
+
+            recordAudio.startRecording();
+            stopRecording.disabled = false;
+        }, function(error) {
+            console.error(JSON.stringify(error));
+        });
+    };
+    socket.addEventListener('message', event => {
+      // The `event` object is a typical DOM event object, and the message data sent
+      // by the server is stored in the `data` property
+      console.log('Received:', event.data);
+    });
+
+    const resultpreview = document.getElementById('results');
+    /*socket.on('announcements', function(data) {
+            console.log('Got announcement:', data.message);
+        });
+    socket.on('results', function(data) {
+        console.log(data);
+        if(data[0].queryResult) {
+            resultpreview.innerHTML += "" + data[0].queryResult.fulfillmentText;
+        }
+    }
+    );*/
+
+    </script>
+  </body>
+</html>
