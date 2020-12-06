@@ -10,20 +10,35 @@ require('dotenv').config();
 async function readPicture(base64string) {
     console.log('Reading...');
     const vision = require('@google-cloud/vision');
-    const request = {
+    const requests = {
         image: {
             content: base64string
         }
     };
 
-    const client = new vision.ImageAnnotatorClient();
-    const [result1] = await client.textDetection(request);
-    // console.log(result1)
-    const detections = await result1.textAnnotations;
     let words1 = [];
-    detections.forEach(text => words1.push(text.description));
-    words1.shift()
-    console.log(words1);
+
+
+    try {
+        const client = new vision.ImageAnnotatorClient();
+        const [result1] = await client.textDetection(requests);
+        console.log(result1)
+        const detections = result1.textAnnotations;
+        detections.forEach(text => words1.push(text.description));
+        words1.shift()
+        console.log(words1);
+    } catch(err) {
+        console.log(err.message)
+    }
+
+
+
+    // const client = new vision.ImageAnnotatorClient();
+    // const results = await client.batchAnnotateImages({requests});
+    // const detections = results[0].responses;
+    // console.log(detections);
+    // return detections;
+
     // const [result2] = await client.documentTextDetection(request);
     // console.log(result2);
     // const fullTextAnnotation = result.fullTextAnnotaion;
@@ -46,6 +61,8 @@ async function readPicture(base64string) {
     //       });
     //     });
     //   });
+
+    
     return words1;
 }
 
@@ -78,8 +95,11 @@ exports.readPic = functions.https.onRequest((request, response) => {
         response.end();
     } else {
         console.log('Received image...')
-        words = readPicture(request.body.png);
-        console.log(words);
-        response.status(200).send({'words': words});
+        readPicture(request.body.png).then(words => {
+            console.log(words);
+            return response.status(200).send({'words': words});
+        }).catch(e => {
+            response.status(400).send({'words': []});
+        });
     }
 });
